@@ -1,0 +1,83 @@
+<!--
+	This model consists of a five link pendulum tree, to make up a basic walker
+	All joints are hinges and the body is contraint to the saggital plane
+
+	This version is hinged around the stance foot!
+-->
+<mujoco model="FiveLinkBiped">
+
+	<compiler inertiafromgeom="true" angle="radian"/>
+	<option>
+		<flag energy="enable"/>
+	</option>
+	<default>
+		<joint damping="1" armature="0"/>
+		<geom condim="1" material="matgeom" solref="0.05 2"/>
+	</default>
+
+	<asset>
+		<texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0.2 0.2 0.2" width="512" height="512"/>
+		<texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
+
+		<material name="matplane" texture="texplane" texrepeat="1 1" texuniform="true"/>
+		<material name="matgeom" rgba="0.1 0.8 0.1 1"/>
+	</asset>
+
+	<worldbody>
+		<light diffuse="0.8 0.8 0.8" pos="0.75 0.75 1.5" dir="-0.5 -0.5 -1"/>
+
+		<geom name="floor" pos="0 0 0.0" size="5 5 .25" type="plane" material="matplane" condim="3"/>
+
+		<!--Link 1/torso-->
+		<body pos="0 0.0 0.801" name="torso">
+			<joint type="slide" axis = "1 0 0" name="slidex"/>
+			<joint type="slide" axis = "0 0 1" name="slidey"/>
+			<joint type="hinge" axis="0 1 0" name="upper_body_rotation"/>
+			<geom name="link1" type="capsule" fromto="0 0 0 0 0 0.625" size="0.05 0.3"/>
+
+			<!-- Link 2/ right leg upper-->
+			<body pos="0 -0.11 0.0" name="right_femur">
+				<joint type="hinge" axis="0 -1 0" name="right_hip" limited="true" range="-0.53 1.92"/>
+				<geom name="link2" type="capsule" fromto="0 0 0 0 0 -0.4" size="0.05 0.3"/>
+
+				<!-- Link 3 / right leg down-->
+				<body pos="0 0 -0.4" name="right_tibia">
+					<joint type="hinge" axis="0 1 0" name="right_knee" limited="true" range="-0.08 2.35"/>
+					<geom name="link3" type="capsule" fromto="0 0 0 0 0 -0.35" size="0.05 0.3"/>
+				</body>
+			</body>
+
+			<!-- Link 4/ left leg upper-->
+			<body pos="0 0.11 0.0" name="left_femur">
+				<joint type="hinge" axis="0 -1 0" name="left_hip" limited="true" range="-0.53 1.92"/>
+				<geom name="link4" type="capsule" fromto="0 0 0 0 0 -0.4" size="0.05 0.3"/>
+
+				<!-- Link 5 / right leg down-->
+				<body pos="0 0 -0.4" name="left_tibia">
+					<joint type="hinge" axis="0 1 0" name="left_knee" limited="true" range="-0.08 2.35"/>
+					<geom name="link5" type="capsule" fromto="0 0 0 0 0 -0.35" size="0.05 0.3"/>
+				</body>
+			</body>
+		</body>
+	</worldbody>
+
+	<actuator>
+		<!-- <motor name="torque1" joint="hinge1" ctrlrange="-1000 1000" ctrllimited="true"/> -->
+		<motor name="torque_right_hip" joint="right_hip" ctrlrange="-100 100" ctrllimited="true"/>
+		<motor name="torque_right_knee" joint="right_knee" ctrlrange="-100 100" ctrllimited="true"/>
+		<motor name="torque_left_hip" joint="left_hip" ctrlrange="-100 100" ctrllimited="true"/>
+		<motor name="torque_left_knee" joint="left_knee" ctrlrange="-100 100" ctrllimited="true"/>
+	</actuator>
+
+	<sensor>
+		<subtreecom name="com" body="right_tibia"/>
+		<subtreelinvel name="linvel" body="right_tibia"/>
+		<framepos name="torso_com" objtype = "body" objname="torso"/>
+
+		<jointlimitpos name="right_knee_lim" joint="right_knee"/>
+		<jointlimitpos name="right_hip_lim" joint="right_hip"/>
+		<jointlimitpos name="left_knee_lim" joint="left_knee"/>
+		<jointlimitpos name="left_hip_lim" joint="left_hip"/>
+
+	</sensor>
+</mujoco>
