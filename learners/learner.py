@@ -108,7 +108,7 @@ class Learner:
                     self.save()
 
                 print("Init state: %s"%self.env.state)
-                for _ in count():
+                for i in count():
                     total_counter += 1
                     old_state = self.env.state
 
@@ -132,7 +132,7 @@ class Learner:
                         self.agent.hard_update()
 
                     if self.env.done:
-                        self.accumulated_loss.append(total_loss)
+                        self.accumulated_loss.append(total_loss/i)
                         self.accumulated_reward.append(total_reward)
                         break
                 print("%s: %.1f%% Total Reward: %f" % (self.file_name.split('/')[-1], (epoch / self._n_runs * 100), total_reward))
@@ -165,7 +165,7 @@ class Learner:
         np.savetxt(self.total_reward_name, self.accumulated_reward, delimiter=',', fmt='%.10f')
 
     def load_lists(self):
-        total_loss_name = self.file_name + "_total_loss.csv"
+        total_loss_name = self.file_name + "_average_loss.csv"
         evaluated_reward_name = self.file_name + "_evaluated_reward.csv"
         total_reward_name = self.file_name + "_total_reward.csv"
 
