@@ -85,4 +85,4 @@ if __name__=='__main__':
     agent_kwargs, learner_kwargs, environment_kwargs, file_name = parse_args(args_dict)
     full_name = "_data/"+directory_name+"/" + file_name
     run_N_times(agent_kwargs=agent_kwargs, base_name=full_name+"0", default_name=default_name)
-    # run_N_times(agent_kwargs=agent_kwargs, base_name=full_name+"1", default_name=default_name)
+    run_N_times(agent_kwargs=agent_kwargs, base_name=full_name+"1", default_name=default_name)
