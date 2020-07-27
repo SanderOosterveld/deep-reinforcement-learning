@@ -50,6 +50,9 @@ def parse_args(args: dict):
             if argument == 'gamma':
                 agent_kwargs['gamma'] = value
                 file_name = file_name + "gamma" + str(value).replace(".","_") + "__"
+            if argument == 'n_runs':
+                learner_kwargs['n_runs'] = value
+                file_name = file_name + "NRuns" + str(value) + "__"
 
     if file_name=="":
         file_name = "default"
@@ -69,6 +72,7 @@ if __name__=='__main__':
     parser.add_argument('--replay_capacity', type=int, help="Size of the replay memory: default = 100000")
     parser.add_argument('--loss_function', type=str, choices=loss_function_mapping.keys(), help="Loss function used for both the critic and actor: default = MSE")
     parser.add_argument('--gamma', type=float, help="Gamma value: default = 0.99")
+    parser.add_argument('--n_runs', type=int, help="Number of epochs before calling it quits")
 
     args = parser.parse_args()
     args_dict = vars(args)
@@ -80,5 +84,5 @@ if __name__=='__main__':
 
     agent_kwargs, learner_kwargs, environment_kwargs, file_name = parse_args(args_dict)
     full_name = "_data/"+directory_name+"/" + file_name
-    run_N_times(agent_kwargs=agent_kwargs, base_name=full_name+"0", default_name=default_name)
-    run_N_times(agent_kwargs=agent_kwargs, base_name=full_name+"1", default_name=default_name)
+    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, base_name=full_name+"0", default_name=default_name)
+    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, base_name=full_name+"1", default_name=default_name)
