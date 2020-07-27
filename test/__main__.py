@@ -1,6 +1,3 @@
-from .test_0720 import main
-
-
 import argparse
 import torch.optim as optim
 import torch.nn as nn
@@ -59,7 +56,6 @@ def parse_args(args: dict):
     else:
         file_name = file_name[0:-1]
     return agent_kwargs, learner_kwargs, environment_kwargs, file_name
-
 
 
 if __name__=='__main__':
