@@ -3,14 +3,16 @@ from agents import TD3, DDPGAgent
 from learners import Learner, EpisodicLearner
 from learners.radam import RAdam
 
+import torch
+import time
 import gc
 import threading
 
 def run_N_times(env_kwargs={}, agent_kwargs={}, learner_kwargs={}, base_name=None, N_threads=5, agent_class=TD3,
-                learner_class=Learner, default_name=None):
+                learner_class=Learner, environment_class = ContinuousUpswingPendulum, default_name=None):
     threads = []
     for i in range(N_threads):
-        environment = ContinuousUpswingPendulum(**env_kwargs)
+        environment = environment_class(**env_kwargs)
         agent = agent_class(environment.nb_sensors, environment.nb_actuators, **agent_kwargs)
 
         file_name = base_name + "_" + str(i)
@@ -29,3 +31,5 @@ def run_N_times(env_kwargs={}, agent_kwargs={}, learner_kwargs={}, base_name=Non
         threads[i].join()
 
     gc.collect()
+    torch.cuda.empty_cache()
+    time.sleep(1)

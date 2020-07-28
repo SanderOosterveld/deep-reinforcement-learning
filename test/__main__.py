@@ -3,6 +3,8 @@ import torch.optim as optim
 import torch.nn as nn
 import learners.radam.radam_optim as radam
 
+from environments import ContinuousUpswingPendulum, HumanoidEnvironment
+
 from . import run_N_times
 
 optimizer_mapping = {
@@ -73,7 +75,7 @@ if __name__=='__main__':
     parser.add_argument('--loss_function', type=str, choices=loss_function_mapping.keys(), help="Loss function used for both the critic and actor: default = MSE")
     parser.add_argument('--gamma', type=float, help="Gamma value: default = 0.99")
     parser.add_argument('--n_runs', type=int, help="Number of epochs before calling it quits")
-
+    parser.add_argument('--mujoco', action='store_true', help ="Switch to using the mujoco environment")
     args = parser.parse_args()
     args_dict = vars(args)
     directory_name = args.directory
@@ -81,8 +83,11 @@ if __name__=='__main__':
         default_name = "_data/" + directory_name + "/_"
     else:
         default_name = None
-
+    if args.mujoco:
+        environment_class = HumanoidEnvironment
+    else:
+        environment_class = ContinuousUpswingPendulum
     agent_kwargs, learner_kwargs, environment_kwargs, file_name = parse_args(args_dict)
     full_name = "_data/"+directory_name+"/" + file_name
-    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, base_name=full_name+"0", default_name=default_name)
-    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, base_name=full_name+"1", default_name=default_name)
+    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, environment_class = environment_class, base_name=full_name+"0", default_name=default_name)
+    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, environment_class = environment_class, base_name=full_name+"1", default_name=default_name)

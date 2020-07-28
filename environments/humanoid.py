@@ -63,7 +63,7 @@ class HumanoidEnvironment(_Environment):
                  time_limit=HUMANOID_TIME_LIMIT,
                  max_torque=HUMANOID_MAX_TORQUE):
         self.simulator = FiveLinkedBiped().set_dt(dt)
-        self.rewards_args = HUMANOID_REWARD_KWARGS
+        self.reward_args = HUMANOID_REWARD_KWARGS
         self.max_torque = max_torque
         super(self.__class__, self).__init__(_HUMANOID_DOF, _N_MOTORS, control_scale_factor=max_torque)
 

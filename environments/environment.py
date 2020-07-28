@@ -147,6 +147,10 @@ class _Environment:
     def done(self):
         raise NotImplementedError
 
+    @property
+    def success(self):
+        return False
+
     def reset(self):
         self.simulator.reset()
 
