@@ -56,6 +56,19 @@ def get_joint_angles():
 _HUMANOID_INIT_RANGE = get_joint_angles()
 
 
+
+def store_humanoid_defaults(file_name):
+    file_name += "_defaults_humanoid.txt"
+    file_name = os.path.join(os.getcwd(), file_name)
+    file_name = check_store_name(file_name)
+    f = open(file_name, 'w')
+    for name, value in globals().items():
+        if name.split('_')[0] == 'HUMANOID':
+            line = str(name) + ' ---> ' + str(value) + "\r\n"
+            f.write(line)
+    f.close()
+
+
 class HumanoidEnvironment(_Environment):
 
     def __init__(self,
@@ -103,14 +116,6 @@ class HumanoidEnvironment(_Environment):
     def get_random_range(self):
         return list(_HUMANOID_INIT_RANGE)
 
+    def store_defaults(self, file_name):
+        store_humanoid_defaults(file_name)
 
-def store_humanoid_defaults(file_name):
-    file_name += "_defaults_humanoid.txt"
-    file_name = os.path.join(os.getcwd(), file_name)
-    file_name = check_store_name(file_name)
-    f = open(file_name, 'w')
-    for name, value in globals().items():
-        if name.split('_')[0] == 'HUMANOID':
-            line = str(name) + ' ---> ' + str(value) + "\r\n"
-            f.write(line)
-    f.close()
