@@ -67,6 +67,10 @@ def parse_args(args: dict):
             if argument == 'epsilon_type':
                 epsilon_args = args['epsilon_args']
                 learner_kwargs['epsilon'] = epsilon_options[value][0](*epsilon_args)
+                file_name = file_name + value + str(epsilon_args) + "__"
+            if argument == 'batch_size':
+                agent_kwargs['batch_size'] = value
+                file_name = file_name + "batch_size" + str(value) + "__"
 
 
     if file_name=="":
