@@ -3,6 +3,7 @@ import pprint
 import torch
 import torch.optim as optim
 import torch.nn as nn
+import torch.nn.functional as F
 import learners.radam.radam_optim as radam
 
 from environments import ContinuousUpswingPendulum, HumanoidEnvironment
@@ -12,10 +13,10 @@ from . import run_N_times
 import learners.epsilon as eps
 
 activation_function_mapping = {
-    'relu': nn.ReLU,
-    'leaky_relu': nn.LeakyReLU,
+    'relu': F.relu,
+    'leaky_relu': F.leaky_relu,
     'tanh': torch.tanh,
-    'softmax': nn.Softmax
+    'softmax': F.softmax
 }
 
 epsilon_options = {
