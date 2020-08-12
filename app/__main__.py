@@ -1,5 +1,6 @@
 import argparse
 import pprint
+import torch
 import torch.optim as optim
 import torch.nn as nn
 import learners.radam.radam_optim as radam
@@ -9,6 +10,13 @@ from environments import ContinuousUpswingPendulum, HumanoidEnvironment
 from . import run_N_times
 
 import learners.epsilon as eps
+
+activation_function_mapping = {
+    'relu': nn.ReLU,
+    'leaky_relu': nn.LeakyReLU,
+    'tanh': torch.tanh,
+    'softmax': nn.Softmax
+}
 
 epsilon_options = {
     "constant": (eps.ConstantEpsilon, ["value"]),
@@ -67,10 +75,22 @@ def parse_args(args: dict):
             if argument == 'epsilon_type':
                 epsilon_args = args['epsilon_args']
                 learner_kwargs['epsilon'] = epsilon_options[value][0](*epsilon_args)
-
+                file_name = file_name + value + str(epsilon_args) + "__"
+            if argument == 'batch_size':
+                agent_kwargs['batch_size'] = value
+                file_name = file_name + "batch_size" + str(value) + "__"
+            if argument == 'activation_function':
+                agent_kwargs['activation_function'] = activation_function_mapping[value]
+                file_name = file_name + value + "__"
+            if argument == 'control_scale':
+                if args['mujoco']:
+                    environment_kwargs['max_torque'] = value
+                else:
+                    environment_kwargs['torque_angle_limit'] = value
+                file_name = file_name + "control_scale" + str(value) + "__"
 
     if file_name=="":
-        file_name = "default"
+        file_name = "default_"
     else:
         file_name = file_name[0:-1]
     return agent_kwargs, learner_kwargs, environment_kwargs, file_name
@@ -94,7 +114,8 @@ if __name__=='__main__':
     parser.add_argument('--epsilon_options', action='store_true', help="Show-epsilon-options")
     parser.add_argument('--epsilon_type', type=str, choices=epsilon_options.keys(), help="Optimizer type: default = linear")
     parser.add_argument('--epsilon_args', type=float, nargs="+", help="Epsilon args, as shown using --epsilon_options")
-
+    parser.add_argument('--activation_function', type=str, choices=activation_function_mapping.keys(), help="Activation function: default = relu")
+    parser.add_argument('--control_scale', type=int, help="Max torque scaler, for humanoid max torque in Nm, for pendulum max angle in deg: default = 15 & default = 30 respectively")
 
     args = parser.parse_args()
     args_dict = vars(args)
@@ -106,7 +127,7 @@ if __name__=='__main__':
     agent_kwargs, learner_kwargs, environment_kwargs, file_name = parse_args(args_dict)
     if args.mujoco:
         environment_class = HumanoidEnvironment
-        file_name = file_name + "__mujoco"
+        file_name = file_name + "__mujoco_"
     else:
         environment_class = ContinuousUpswingPendulum
     full_name = "_data/"+directory_name+"/" + file_name
