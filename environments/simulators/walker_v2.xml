@@ -2,7 +2,7 @@
 	This model consists of a five link pendulum tree, to make up a basic walker
 	All joints are hinges and the body is contraint to the saggital plane
 
-	This version is hinged around the stance foot!
+	Modified based on work by Robert Roos
 -->
 <mujoco model="FiveLinkBiped">
 
@@ -78,6 +78,5 @@
 		<jointlimitpos name="right_hip_lim" joint="right_hip"/>
 		<jointlimitpos name="left_knee_lim" joint="left_knee"/>
 		<jointlimitpos name="left_hip_lim" joint="left_hip"/>
-
 	</sensor>
 </mujoco>
