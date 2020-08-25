@@ -16,11 +16,12 @@ HUMANOID_HIP_INIT_RANGE = (-0.1, 0.5)
 HUMANOID_KNEE_INIT_RANGE = (0.1, 0.3)
 HUMANOID_HIP_VEL_INIT_RANGE = (0, 0)
 HUMANOID_KNEE_VEL_INIT_RANGE = (0, 0)
+HUMANOID_INIT_LIN_VEL_RANGE = (0.8, 1.2)
 HUMANOID_REWARD_KWARGS = {'Cth':1.0,
-                          'Clv':0.1,
+                          'Clv':1.0,
                           'required_linvel':1.0,
                           'Cc':0.05,
-                          'alive_bonus':1.0,
+                          'alive_bonus':2.0,
                           'torso_min':0.7,
                           'power':0.33,
                           'torso_rectified_loss':1.0}
@@ -42,6 +43,8 @@ def get_joint_angles():
     hip_pos_mask[6::4] = True
     hip_vel_mask = np.zeros(_HUMANOID_DOF, dtype=np.bool)
     hip_vel_mask[7::4] = True
+    lin_vel_mask = np.zeros(_HUMANOID_DOF, dtype=np.bool)
+    lin_vel_mask[1] = True
 
     _tuple_to_2x2_np(HUMANOID_HIP_INIT_RANGE)
     joint_random_range[knee_pos_mask] = _tuple_to_2x2_np(HUMANOID_KNEE_INIT_RANGE)
@@ -50,6 +53,7 @@ def get_joint_angles():
     joint_random_range[hip_pos_mask] = _tuple_to_2x2_np(HUMANOID_HIP_INIT_RANGE)
     joint_random_range[hip_vel_mask] = _tuple_to_2x2_np(HUMANOID_HIP_VEL_INIT_RANGE)
 
+    joint_random_range[lin_vel_mask] = list(HUMANOID_INIT_LIN_VEL_RANGE)
     return joint_random_range
 
 
