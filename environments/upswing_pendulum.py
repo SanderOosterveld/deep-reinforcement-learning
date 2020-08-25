@@ -16,7 +16,7 @@ UPSWPEND_ANG_VEL_LIMIT = 6 * math.pi
 UPSWPEND_TIME_LIMIT = 8
 UPSWPEND_REWARD_KWARGS = {'angle_factor': 0.1,
                           'velocity_factor': 0.001,
-                          'control_factor': 0}
+                          'control_factor': 0.01}
 UPSWPEND_VEL_INIT_RANGE = (-1, 1)
 UPSWPEND_ANG_INIT_RANGE = (-math.pi/2, math.pi/2)
 
@@ -67,7 +67,7 @@ class DiscreteUpSwingPendulum(_DiscreteEnvironment):
         angle = self.simulator.get_jasper_angle()
         Ra = angle_factor * ((angle - math.pi) ** 2 - math.pi ** 2)
         Rv = -velocity_factor * self._state.angular_velocity ** 2
-        Rc = -control_factor * np.linalg.norm(self._controls)
+        Rc = -control_factor * np.linalg.norm(self._controls/self.max_torque)
         return Ra + Rv + Rc
 
     @property
@@ -122,7 +122,7 @@ class ContinuousUpswingPendulum(_Environment):
         self.angle_required = angle_required
         self.angular_velocity_required = angular_velocity_required
 
-    def _get_reward(self, angle_factor=0.1, velocity_factor=0.001, control_factor=0):
+    def _get_reward(self, angle_factor=0.1, velocity_factor=0.001, control_factor=0.001):
         """
         Return the reward of the current state of the environment.
 
@@ -135,7 +135,7 @@ class ContinuousUpswingPendulum(_Environment):
         angle = self.simulator.get_jasper_angle()
         Ra = angle_factor * ((angle - math.pi) ** 2 - math.pi ** 2)
         Rv = -velocity_factor * self._state[1] ** 2
-        Rc = -control_factor * np.linalg.norm(self._controls)
+        Rc = -control_factor * np.linalg.norm(self._controls/self.max_torque)
         return Ra + Rv + Rc
 
     def store_defaults(self, file_name):
