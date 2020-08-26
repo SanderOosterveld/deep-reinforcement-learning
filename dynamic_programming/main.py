@@ -143,7 +143,7 @@ Q_matrix = np.zeros((N, N, num_actions))
 Q_new = np.zeros((N, N, num_actions))
 A_matrix = np.zeros((N, N))
 
-gamma = 0.95
+gamma = 0.99
 
 
 def get_Q_matrix() -> np.ndarray:
@@ -251,14 +251,16 @@ if __name__ == '__main__':
     # get_reward_matrix()
     # reward_matrix.tofile(os.path.join(dyn_directory,'reward_matrix.dat'))
     #
+
     # Q_matrix = get_Q_matrix()
     # Q_matrix.tofile(os.path.join(dyn_directory,'q-matrix.dat'))
     Q_matrix = np.fromfile(os.path.join(dyn_directory,'q-matrix.dat')).reshape(Q_matrix.shape)    #
 
-    # final_grid = np.fromfile('small_dt-500runs.dat').reshape(final_grid.shape)
-    # index_grid = np.fromfile('small_dt-500runs_index.dat').reshape(index_grid.shape)
-    # reward_matrix = np.fromfile('small_dt-500runs_reward.dat').reshape(reward_matrix.shape)
-
+    # final_grid = np.fromfile(os.path.join(dyn_directory,'grid.dat')).reshape(final_grid.shape)
+    # index_grid = np.fromfile(os.path.join(dyn_directory,'index_grid.dat')).reshape(index_grid.shape)
+    # reward_matrix = np.fromfile(os.path.join(dyn_directory,'reward_matrix.dat')).reshape(reward_matrix.shape)
+    # Q_matrix = get_Q_matrix()
+    # Q_matrix.tofile(os.path.join(dyn_directory, 'q-matrix.dat'))
     #get_reward_matrix()
     # reward_matrix.tofile('1000runs_reward.dat')
     #
@@ -266,8 +268,8 @@ if __name__ == '__main__':
     # Q_matrix.tofile('1000runs_Q_function.dat')
     value_matrix = np.amax(Q_matrix, 2)
     policy_matrix = np.argmax(Q_matrix, 2)
-    # np.savetxt(os.path.join(dyn_directory, 'policy.csv'), policy_matrix, delimiter=',', fmt='%.10f')
-    # np.savetxt(os.path.join(dyn_directory, 'value.csv'), value_matrix, delimiter=',', fmt='%.10f')
+    np.savetxt(os.path.join(dyn_directory, 'policy.csv'), policy_matrix, delimiter=',', fmt='%.10f')
+    np.savetxt(os.path.join(dyn_directory, 'value.csv'), value_matrix, delimiter=',', fmt='%.10f')
 
     #policy_matrix = 2*np.ones(policy_matrix.shape, dtype=np.int)
     # print(final_grid)
