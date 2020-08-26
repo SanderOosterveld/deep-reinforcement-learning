@@ -3,6 +3,7 @@ from agents.agent import AgentWithNetworks
 from .networks import FullyConnectedNetwork, DelayedInputNetwork
 from utils import check_store_name
 from utils.random_processes import OrnsteinUhlenbeckProcess
+from utils.pendulum_plotters import get_policy_matrix, get_value_matrix
 
 import numpy as np
 import os
@@ -26,7 +27,7 @@ TD3_CRITIC_LR_MULTIPLIER = 1
 TD3_ACTION_INSERTION = 1
 TD3_HIDDEN_LAYERS = (100, 200)
 TD3_ACTOR_UPDATE_FREQ = 2
-
+TD3_POLICY_SMOOTHING = 0.2
 
 class TD3(AgentWithNetworks):
 
@@ -45,6 +46,7 @@ class TD3(AgentWithNetworks):
                  critic_lr_multiplier=TD3_CRITIC_LR_MULTIPLIER,
                  action_insertion=TD3_ACTION_INSERTION,
                  actor_update_freq=TD3_ACTOR_UPDATE_FREQ,
+                 policy_smoothing=TD3_POLICY_SMOOTHING,
                  **ornstein_kwargs):
 
         super(self.__class__, self).__init__(states, actions, replay_capacity, batch_size)
@@ -171,7 +173,8 @@ class TD3(AgentWithNetworks):
         non_final_next_states = torch.cat([s for s in next_states if s is not None])
 
         expected_best_actions = self.actor_target(non_final_next_states)
-
+        policy_smoothing = torch.clamp(torch.randn(expected_best_actions.shape, device=self.device)*0.2,-0.5,0.5)
+        expected_best_actions = torch.clamp(expected_best_actions+policy_smoothing,-1,1)
         next_state_values_1 = torch.zeros((self.batch_size, 1), device=self.device)
         next_state_values_1[non_final_mask] = self.critic_1_target((non_final_next_states, expected_best_actions)).detach()
         next_state_values_2 = torch.zeros((self.batch_size, 1), device=self.device)
@@ -242,6 +245,15 @@ class TD3(AgentWithNetworks):
 
     def store_defaults(self, file_name):
         store_td3_defaults(file_name)
+
+    def store_policy_value(self, file_name, **sampling_kwargs):
+        policy_matrix = get_policy_matrix(self.actor)
+        value_matrix = get_value_matrix(self.actor, self.critic_1)
+        policy_name = check_store_name(file_name)+"_policy.csv"
+        value_name = check_store_name(file_name)+"_value.csv"
+        np.savetxt(policy_name, policy_matrix, delimiter=',', fmt='%.10f')
+        np.savetxt(value_name, value_matrix, delimiter=',', fmt='%.10f')
+
 
 def store_td3_defaults(file_name):
     file_name += "_defaults_td3.txt"
