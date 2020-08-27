@@ -123,3 +123,10 @@ class HumanoidEnvironment(_Environment):
     def store_defaults(self, file_name):
         store_humanoid_defaults(file_name)
 
+
+    def evaluated_init(self):
+        self.reset()
+        state = self.state
+        state[1] = HUMANOID_REWARD_KWARGS['required_linvel']
+        self.state = state
+

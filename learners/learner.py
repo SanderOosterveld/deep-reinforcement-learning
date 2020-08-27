@@ -100,7 +100,7 @@ class Learner:
                 epsilon = self.epsilon()
                 if epoch % self._eval_freq == self._eval_freq-1:
                     self.evaluate()
-                    self.env.reset()
+                    self.env.evaluated_init()
                 else:
                     self.env.random_init(self._random_init_range)
 

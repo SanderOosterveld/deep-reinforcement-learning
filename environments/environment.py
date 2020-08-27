@@ -153,6 +153,7 @@ class _Environment:
 
     def reset(self):
         self.simulator.reset()
+        self.state = self.simulator.get_state()
 
     def measure(self):
         self._sensor_data[:] = self.state

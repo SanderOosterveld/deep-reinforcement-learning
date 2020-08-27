@@ -89,9 +89,6 @@ class DiscreteUpSwingPendulum(_DiscreteEnvironment):
     def done(self):
         return self.failure or self.success
 
-    def reset(self):
-        self.state = np.zeros(self.nb_states)
-        self.simulator.reset()
 
     def store_defaults(self, file_name):
         store_upswing_pendulum_defaults(file_name)
@@ -160,9 +157,6 @@ class ContinuousUpswingPendulum(_Environment):
     def done(self):
         return self.failure or self.success
 
-    def reset(self):
-        self.state = np.zeros(self.nb_states)
-        self.simulator.reset()
 
     def get_random_range(self):
         return list((UPSWPEND_ANG_INIT_RANGE, UPSWPEND_VEL_INIT_RANGE))
