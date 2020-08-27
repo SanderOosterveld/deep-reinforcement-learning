@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import learners.radam.radam_optim as radam
 
 from environments import ContinuousUpswingPendulum, HumanoidEnvironment
-
+from agents import TD3, DDPGAgent
 from . import run_N_times
 
 import learners.epsilon as eps
@@ -131,11 +131,17 @@ if __name__=='__main__':
         file_name = file_name + "__mujoco_"
     else:
         environment_class = ContinuousUpswingPendulum
+
+    if args.ddpg:
+        agent_class = DDPGAgent
+        file_name = file_name + "__ddpg_"
+    else:
+        agent_class = TD3
     full_name = "_data/"+directory_name+"/" + file_name
 
     if args.epsilon_options:
         pprint.pprint(epsilon_options)
         exit()
 
-    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, environment_class = environment_class, base_name=full_name+"0", default_name=default_name)
-    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, environment_class = environment_class, base_name=full_name+"1", default_name=default_name)
+    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, environment_class = environment_class, agent_class=agent_class,base_name=full_name+"0", default_name=default_name)
+    run_N_times(agent_kwargs=agent_kwargs, learner_kwargs=learner_kwargs, env_kwargs=environment_kwargs, environment_class = environment_class, agent_class=agent_class,base_name=full_name+"1", default_name=default_name)
